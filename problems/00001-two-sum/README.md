@@ -32,7 +32,7 @@ You can return the answer in any order.
 >
 > **Output:** [0,1]
 
-Constraints:
+**Constraints:**
 
 - `2 <= nums.length <= 10^4`
 - `-10^9 <= nums[i] <= 10^9`
