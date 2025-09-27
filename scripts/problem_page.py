@@ -89,7 +89,7 @@ def generate(obj):
     dif = obj.difficulty
     col = obj.color
     topics = obj.topics
-    os.makedirs(dirname)
+    obj.problem.generate()
     with open(f"{dirname}/README.md", "w") as f:
         f.write(f"# {num}. {tit}\n\n")
         f.write(f"[![{dif}](https://img.shields.io/badge/{dif}-{col})](#)\n")
