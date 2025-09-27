@@ -1,11 +1,12 @@
 import os
+import myio
+from directory import ProblemDirectory
+from abort import Abort, ABORT_TRIGGER
 
-PROBLEMS_DIR = "./problems"
 DIFFICULTY_AND_COLORS = [
     ("Easy", "319148"),
     ("Medium", "916f31"),
-    ("Hard", "913c31"),
-    ("Abort", None)
+    ("Hard", "913c31")
 ]
 TOPICS = [
     "Array",
@@ -81,59 +82,76 @@ TOPICS = [
     "Biconnected Component"
 ]
 
+def generate(obj):
+    dirname = obj.problem.fullpath
+    num = obj.number
+    tit = obj.title
+    dif = obj.difficulty
+    col = obj.color
+    topics = obj.topics
+    os.makedirs(dirname)
+    with open(f"{dirname}/README.md", "w") as f:
+        f.write(f"# {num}. {tit}\n\n")
+        f.write(f"[![{dif}](https://img.shields.io/badge/{dif}-{col})](#)\n")
+        for t in topics:
+            f.write(f"[![{t}](https://img.shields.io/badge/{t.replace(' ', '_')}-302f33)](#)\n")
+        f.write("\n")
+        f.write("Place the content here...")
+
 class ProblemPage:
     """
     New problem page + it's inner attributes.
     """
 
     def __init__(self):
+        print(f"Creating a {myio.norm_cyan_str('new problem page')} (use '{ABORT_TRIGGER}' to stop execution)")
         self.topics = []
+        problem = ProblemDirectory()
+        Abort.check_and_execute(problem.number)
+        while not problem.number_is_safe() or problem.number_already_exists():
+            myio.erase_n(2)
+            problem = ProblemDirectory()
+            Abort.check_and_execute(problem.number)
+        self.problem = problem
+        self.number = int(problem.number)
+        print(
+            f"> Set the problem title: \033[3;90mCapitalized Name\033[0m",
+            end = "\033[16D"
+        )
+        title = input()
+        Abort.check_and_execute(title)
+        self.title = " ".join([word for word in title.split(" ") if word]).title()
+        self.problem.set_fullpath_with_problem_name(self.title)
 
-    def set_number(self, number: str):
-        self.number: str = number
+        colored_diffs = [f"\033[38;2;{';'.join(str(int(hex_color[i:i+2],16)) for i in (0,2,4))}m{txt}\033[0m" for txt, hex_color in DIFFICULTY_AND_COLORS]
+        print(f"> Set the problem difficulty:")
+        for i, dif in enumerate(colored_diffs):
+            print(f"  {i + 1}. {dif}")
+        dif = input("> ")
 
-    def number_is_safe(self) -> bool:
-        num: str = self.number
-        is_not_zero = False
-        if len(num) != 5:
-            return False
-        for c in num:
-            if c < '0' or c > '9': return False
-            is_not_zero |= c > '0'
-        return (not any(
-            entry.startswith(num) \
-            for entry in os.listdir(PROBLEMS_DIR)
-        )) and is_not_zero
+        while dif not in [str(i + 1) for i in range(len(colored_diffs))]:
+            myio.erase_n(2)
+            dif = input("> ")
+            Abort.check_and_execute(dif)
 
-    def set_title_name(self, title: str):
-        self.title = " ".join(
-            word.lower() \
-            for word in title.split(" ") if word
-        ).title()
-        self.dir_name = self.title.lower().replace(" ", "-")
+        Abort.check_and_execute(dif)
+        ind = int(dif) - 1
+        self.difficulty, self.color = DIFFICULTY_AND_COLORS[ind]
 
-    def set_difficulty_and_color(self, difficulty: str, color: str):
-        self.difficulty = difficulty
-        self.color = color
+        self.topics = set()
+        print("Chose the topics (+X | -X | Empty str to continue):")
+        while True:
+            print(">> [{}]".format(", ".join("\033[92m" + str(t) + "\033[0m" for t in self.topics)))
+            top = " ".join(word.capitalize() for word in input("> ").strip().split(" ") if word)
+            Abort.check_and_execute(top)
+            if top == "": break
+            elif top.startswith("+"): func = self.topics.add
+            elif top.startswith("-"): func = self.topics.remove
+            else: continue
+            top = top[1:].strip().title()
+            myio.erase_n(3)
+            if top in TOPICS:
+                func(top)
 
-    def print_topics(self):
-        print("[{}]".format(", ".join("\033[92m" + str(t) + "\033[0m" for t in self.topics)))
-
-    def push_topic(self, topic: str):
-        if topic not in self.topics:
-            self.topics.append(topic)
-
-    def remove_topic(self, topic: str):
-        if topic in self.topics:
-            self.topics.remove(topic)
-
-    def generate(self):
-        dirname = f"{PROBLEMS_DIR}/{self.number}-{self.dir_name}"
-        os.makedirs(dirname, exist_ok = True)
-        with open(f"{dirname}/README.md", "w") as f:
-            f.write(f"# {int(self.number)}. {self.title}\n\n")
-            f.write(f"[![{self.difficulty}](https://img.shields.io/badge/{self.difficulty.replace(' ', '_')}-{self.color})](#)\n")
-            for t in self.topics:
-                f.write(f"[![{t}](https://img.shields.io/badge/{t.replace(' ', '_')}-302f33)](#)\n")
-            f.write("\n")
-            f.write("Place the content here...")
+        generate(self)
+        print(f"Successfully generated ({self.problem.fullpath})")
