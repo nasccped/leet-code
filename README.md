@@ -9,3 +9,9 @@
 </div>
 
 My leet-code solutions.
+
+You can find all my problems solves at [problems](./problems/)
+directory.
+
+By running `python scripts`, it'll generate a new problem page/solve
+based on the CLI inputs.
