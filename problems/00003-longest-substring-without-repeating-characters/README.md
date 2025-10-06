@@ -37,7 +37,7 @@ substring**[^substring] without duplicate characters.
 
 **Constraints:**
 
-- `0 <= s.length <= 5 * 10^4`
+- <code>0 <= s.length <= 5 * 10<sup>4</sup></code>
 - `s` consists of English letters, digits, symbols and spaces.
 
 [^substring]: A substring is a contiguous non-empty sequence of

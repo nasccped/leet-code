@@ -35,7 +35,7 @@ palindrome[^palindrome], and `false` otherwise.
 
 **Constraints:**
 
-- `-(2^31) <= x <= 2^31 - 1`
+- <code>-2<sup>31</sup> <= x <= 2<sup>31</sup> - 1</code>
 
 **Follow up:** Could you solve it without converting the integer to a
 string?
