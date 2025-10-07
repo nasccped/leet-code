@@ -46,10 +46,17 @@ edition = \"2024\"
         exit(1)
 
     with open(os.path.join(path, "main.rs"), "w") as f:
-        f.write("""impl Solution {
+        f.write("""#![allow(dead_code)]
+struct Solution {}
+
+impl Solution {
     pub fn solution_func() -> ??? {
         todo!("Code here...")
     }
+}
+
+fn main() {
+    println!("This program doesn't have testing since there's no suitable way of complex testing");
 }""")
 
 
