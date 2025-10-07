@@ -18,3 +18,7 @@ impl Solution {
         prefix
     }
 }
+
+fn main() {
+    println!("This program doesn't have testing since there's no suitable way of complex testing");
+}
