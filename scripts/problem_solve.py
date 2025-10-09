@@ -59,11 +59,26 @@ fn main() {
     println!("This program doesn't have testing since there's no suitable way of complex testing");
 }""")
 
+def gen_go_solve(path: str):
+    path = os.path.join(path, "go")
+    try:
+        os.makedirs(path)
+    except:
+        print(f"(Path already/Parent dir doesn't) exists ({path})")
+        exit(1)
+
+    with open(os.path.join(path, "main.go"), "w") as f:
+        f.write("""package main
+
+func solution() {
+    
+}""")
 
 
 AVAILABLE_LANGUAGES = {
     "python": gen_python_solve,
-    "rust": gen_rust_solve
+    "rust": gen_rust_solve,
+    "go": gen_go_solve
 }
 
 class ProblemSolve:
