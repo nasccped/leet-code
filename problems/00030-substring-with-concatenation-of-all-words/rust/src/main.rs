@@ -17,7 +17,7 @@ impl Solution {
         });
         's_iter: for i in 0..=(s.len() - word_len) {
             let mut cloned = word_count.clone();
-            for j in (i..(i + word_len)).filter(|ind| (ind - i) % syll_len == 0) {
+            for j in (i..(i + word_len)).step_by(syll_len) {
                 match cloned.get_mut(&s[j..(j + syll_len)]) {
                     Some(v) if *v > 0 => {
                         *v -= 1;
@@ -34,4 +34,3 @@ impl Solution {
 fn main() {
     println!("This program doesn't have testing since there's no suitable way of complex testing");
 }
-
