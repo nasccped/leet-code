@@ -1,35 +1,30 @@
 package main
 
-// Coordinate type abstraction
-type Coord struct {
-	y, x int
-}
-
 func numIslands(grid [][]byte) int {
 	var (
-		count   int                = 0
-		set     map[Coord]struct{} = map[Coord]struct{}{}
-		explore func(y, x, counter int) int
+		count, m, n int = 0, 0, 0
+		isIsland bool = false
+		explore func(y, x int)
 	)
-	explore = func(y, x, counter int) int {
-		if y < 0 || y >= len(grid) || x < 0 || x >= len(grid[0]) {
-			return counter
+	explore = func(y, x int) {
+		if (y < 0 || y >= m) || (x < 0 || x >= n) || grid[y][x] == '0' {
+			return
 		}
-		c := Coord{y, x}
-		if _, exists := set[c]; exists || grid[y][x] == '0' {
-			return counter
-		}
-		set[c] = struct{}{}
-		counter++
-		return explore(y-1, x, counter) + explore(y+1, x, counter) + explore(y, x-1, counter) + explore(y, x+1, counter)
+		isIsland = true
+		grid[y][x] = '0'
+		explore(y-1, x)
+		explore(y+1, x)
+		explore(y, x-1)
+		explore(y, x+1)
 	}
-	for y, row := range grid {
-		for x, slot := range row {
-			if slot == '0' {
-				continue
-			}
-			if explore(y, x, 0) > 0 {
+	m = len(grid)
+	n = len(grid[0])
+	for y := range m {
+		for x := range n {
+			explore(y, x)
+			if isIsland {
 				count++
+				isIsland = false
 			}
 		}
 	}
